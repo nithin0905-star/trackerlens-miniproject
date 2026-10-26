@@ -1,0 +1,104 @@
+TRACKERLENS — PRIVACY DISCLOSURE
+For Chrome Web Store Submission
+=================================
+
+SINGLE PURPOSE
+--------------
+TrackerLens is a browser privacy auditing and transparency tool.
+Its single purpose is to observe and locally analyze privacy-relevant signals
+on websites the user visits, calculate a transparent Privacy Exposure Score,
+and present findings to the user — all without sending any data to external servers.
+
+USER DATA USAGE
+---------------
+TrackerLens handles the following data. ALL data stays on the user's device.
+
+1. BROWSING HISTORY (URLs and domains visited)
+   - Purpose: To identify which website is being audited and to store a local
+     privacy audit record associated with that domain.
+   - Storage: IndexedDB (local browser storage). Never transmitted externally.
+   - Retention: User-configurable (default: 30 days). Can be deleted at any time.
+
+2. NETWORK REQUEST METADATA
+   - Purpose: To detect third-party tracker domains and analyze cookie metadata
+     from Set-Cookie response headers.
+   - What is captured: Request URL, response headers (for cookie names/attributes).
+   - What is NOT captured: Request/response body, POST data, cookie values,
+     authentication tokens, passwords, or any form data.
+   - Storage: Aggregated tracker and cookie records in IndexedDB. Never transmitted.
+
+3. FINGERPRINTING API ACCESS INDICATORS
+   - Purpose: To record which privacy-sensitive browser APIs (Canvas, WebGL,
+     AudioContext) were accessed during a page visit.
+   - What is captured: API names and access counts. No canvas image data,
+     audio buffers, or rendering output is captured or stored.
+   - Storage: Fingerprinting signal records in IndexedDB. Never transmitted.
+
+4. CONSENT BANNER OBSERVATIONS
+   - Purpose: To detect potential dark patterns in consent banners (missing
+     reject buttons, pre-checked boxes, etc.)
+   - What is captured: DOM structure observations (presence/absence of buttons).
+     No page content, personal data, or form values are read.
+   - Storage: Consent event records in IndexedDB. Never transmitted.
+
+WHAT IS NOT COLLECTED
+---------------------
+TrackerLens does NOT:
+• Collect, read, or store cookie values, session tokens, or authentication data
+• Read or store the content of web pages
+• Capture screenshots or visual page data
+• Record form inputs, passwords, or personal information
+• Track which links users click on pages
+• Collect user identity information
+• Use analytics or crash reporting
+
+DATA STORAGE
+------------
+All data is stored exclusively in the browser's IndexedDB under the database
+name "trackerLensDB". No data is stored in external databases, cloud services,
+or third-party systems.
+
+chrome.storage.session is used only to maintain ephemeral tab tracking state
+across MV3 service worker restarts. This data does not persist across browser
+sessions and is not transmitted externally.
+
+DATA SHARING
+------------
+TrackerLens does NOT share any data with:
+• The extension developer
+• Third-party analytics services
+• Advertising networks
+• Any external server or API
+
+There are no outbound network connections from the extension except:
+• Loading the tracker_domains.json file from the extension bundle (local, bundled)
+• Loading fonts from the extension bundle (local, bundled)
+
+REMOTE CODE
+-----------
+TrackerLens does NOT execute any remotely hosted code. All JavaScript is
+bundled within the extension package and served from the extension's own origin.
+No CDN, no external scripts, no WebSockets, no eval().
+
+USER CONTROL
+------------
+Users can:
+• View all collected data in the History and Summary views
+• Export all data as JSON or CSV
+• Delete all data from the Settings page (partial or full reset)
+• Configure the data retention period (1–365 days)
+• Mark specific sites as "trusted" to suppress alerts
+
+PERMISSIONS AND THEIR DATA USE
+-------------------------------
+• tabs: Read the active tab URL only. No browsing history beyond current tab.
+• webRequest: Observe (read-only) network request URLs and Set-Cookie headers.
+  No request modification, no blocking.
+• storage: Store ephemeral tab state in chrome.storage.session. Not synced.
+• alarms: Schedule periodic local data cleanup. No external communication.
+• <all_urls>: Required for webRequest to operate across all websites.
+  No data from these URLs is transmitted externally.
+
+CONTACT
+-------
+For privacy questions, please open an issue on the project repository.

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="TrackerLens — Privacy Exposure Auditor for the current tab.">
+  <title>TrackerLens</title>
+
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+
+  <!-- ── Header ──────────────────────────────────────────── -->
+  <header class="popup-header" role="banner">
+    <div class="header-brand">
+      <img src="../icons/icon48.png" alt="TrackerLens logo" class="brand-icon" id="brandIcon">
+      <div class="brand-text-col">
+        <span class="brand-name">TrackerLens</span>
+        <span class="brand-sub">Privacy Auditor</span>
+      </div>
+    </div>
+    <div class="header-status">
+      <span class="demo-badge" id="demoBadge" hidden aria-label="Demo mode active">⚗ DEMO</span>
+      <div class="status-indicator" aria-hidden="true">
+        <div class="status-dot" id="statusDot"></div>
+        <span class="status-label" id="statusLabel" aria-live="polite">LOADING</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Loading Skeleton ──────────────────────────────────── -->
+  <div class="loading-skeleton" id="loadingSkeleton" aria-label="Loading privacy report" role="status">
+    <div class="skel-score"></div>
+    <div class="skel-bars">
+      <div class="skel-bar"></div>
+      <div class="skel-bar"></div>
+      <div class="skel-bar"></div>
+      <div class="skel-bar"></div>
+    </div>
+  </div>
+
+  <!-- ── Main Content ─────────────────────────────────────── -->
+  <main id="mainContent" hidden aria-label="Privacy report">
+
+    <!-- ── Site Bar ─────────────────────────────────────── -->
+    <div class="site-bar glass-panel">
+      <div class="site-info">
+        <img class="site-favicon" id="siteFavicon" src="" alt="" width="16" height="16" aria-hidden="true">
+        <span class="site-domain" id="siteDomain" title="">Loading…</span>
+        <span class="secure-badge">🔒 Local Analysis</span>
+      </div>
+      <div class="site-actions">
+        <span class="trust-badge" id="trustBadge" hidden aria-label="Trusted site">🛡 Trusted</span>
+        <button class="trust-toggle-btn" id="btnTrustToggle" title="Toggle trusted site" aria-label="Add to trusted sites">
+          <span class="trust-toggle-icon" id="trustToggleIcon">🛡</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ── Score Hero ────────────────────────────────────── -->
+    <section class="score-hero" id="scoreSection" aria-labelledby="scoreHeading">
+      <div class="score-main">
+        <div class="score-ring-wrap">
+          <svg class="score-ring" width="120" height="120" viewBox="0 0 100 100" role="img" aria-labelledby="scoreRingLabel">
+            <title id="scoreRingLabel">Privacy risk score gauge</title>
+            <circle class="ring-track" cx="50" cy="50" r="42"/>
+            <circle class="ring-fill" cx="50" cy="50" r="42" id="scoreRingFill" stroke-dasharray="264" stroke-dashoffset="264"/>
+          </svg>
+          <div class="score-center animate-fade-in" aria-hidden="true">
+            <span class="score-number" id="scoreNumber">—</span>
+            <span class="score-denom">/100</span>
+          </div>
+        </div>
+
+        <div class="score-details">
+          <h1 class="score-heading" id="scoreHeading" style="display:none">Privacy Exposure Score</h1>
+          <div class="risk-badge risk-none" id="riskBadge" role="status" aria-live="polite">
+            Analysing…
+          </div>
+          <div class="score-meta" id="scoreMeta">
+            <span>Waiting for page data</span>
+          </div>
+          <div class="trust-status" id="trustStatus" hidden>
+            <span class="trust-note">🛡 Trusted — alerts suppressed</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Category Breakdown ────────────────────────────── -->
+    <section class="breakdown-section" aria-label="Score breakdown by category">
+      <div class="breakdown-grid">
+
+        <div class="breakdown-card" id="card-trackers" data-category="trackers">
+          <div class="bcard-head">
+            <span class="bcard-icon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
+            </span>
+            <span class="bcard-label">TRACKERS</span>
+            <span class="bcard-score" id="bscore-trackers">0</span>
+          </div>
+          <div class="bcard-bar-track" aria-hidden="true"><div class="bcard-bar-fill trackers" id="bbar-trackers" style="width:0%"></div></div>
+          <div class="bcard-sub" id="bsub-trackers">No trackers detected</div>
+        </div>
+
+        <div class="breakdown-card" id="card-fp" data-category="fingerprinting">
+          <div class="bcard-head">
+            <span class="bcard-icon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12C2 6.48 6.48 2 12 2s10 4.48 10 10-4.48 10-10 10S2 17.52 2 12zm8-2h4v4H10z"></path></svg>
+            </span>
+            <span class="bcard-label">FINGERPRINTING</span>
+            <span class="bcard-score" id="bscore-fp">0</span>
+          </div>
+          <div class="bcard-bar-track" aria-hidden="true"><div class="bcard-bar-fill fingerprinting" id="bbar-fp" style="width:0%"></div></div>
+          <div class="bcard-sub" id="bsub-fp">No fingerprinting detected</div>
+        </div>
+
+        <div class="breakdown-card" id="card-cookies" data-category="cookies">
+          <div class="bcard-head">
+            <span class="bcard-icon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="10" cy="10" r="1"></circle><circle cx="14" cy="14" r="1"></circle><circle cx="15" cy="8" r="1"></circle><circle cx="8" cy="15" r="1"></circle></svg>
+            </span>
+            <span class="bcard-label">COOKIES</span>
+            <span class="bcard-score" id="bscore-cookies">0</span>
+          </div>
+          <div class="bcard-bar-track" aria-hidden="true"><div class="bcard-bar-fill cookies" id="bbar-cookies" style="width:0%"></div></div>
+          <div class="bcard-sub" id="bsub-cookies">No cookies observed</div>
+        </div>
+
+        <div class="breakdown-card" id="card-consent" data-category="consent">
+          <div class="bcard-head">
+            <span class="bcard-icon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="9" x2="15" y2="15"></line><line x1="15" y1="9" x2="9" y2="15"></line></svg>
+            </span>
+            <span class="bcard-label">CONSENT</span>
+            <span class="bcard-score" id="bscore-consent">0</span>
+          </div>
+          <div class="bcard-bar-track" aria-hidden="true"><div class="bcard-bar-fill consent" id="bbar-consent" style="width:0%"></div></div>
+          <div class="bcard-sub" id="bsub-consent">No consent banner detected</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── Why This Score? ────────────────────────────────── -->
+    <section class="explain-section" id="explainSection">
+      <div class="explain-header">
+        <div class="explain-header-text">
+          <h3 class="explain-title">Why this score?</h3>
+          <p class="explain-intro">Timeline of observed privacy signals</p>
+        </div>
+        <button class="explain-toggle-btn" id="btnExplain" aria-expanded="true" aria-controls="explainPanel" title="Toggle score explanation" aria-label="Toggle score explanation">
+          <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+      </div>
+
+      <div class="explain-panel" id="explainPanel" role="region" aria-label="Score explanation">
+        <div class="timeline-line"></div>
+        <ul class="explain-list timeline-list" id="explainList" aria-label="Explanation items">
+          <li class="explain-empty">No signals detected yet.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ── Detailed Audits (Dynamic) ────────────────────────── -->
+    <section class="audit-section" id="auditSection">
+      <div class="audit-group" id="trackerAuditGroup" hidden>
+        <h3 class="audit-group-title">Trackers Detected</h3>
+        <div class="audit-list" id="trackerList"></div>
+      </div>
+      
+      <div class="audit-group" id="fpAuditGroup" hidden>
+        <h3 class="audit-group-title">Fingerprinting</h3>
+        <div class="audit-list" id="fpList"></div>
+      </div>
+    </section>
+
+    <!-- ── Recommendations ────────────────────────────────── -->
+    <section class="reco-section" id="recoSection" hidden>
+      <div class="reco-header">
+        <span class="reco-icon" aria-hidden="true">🔐</span>
+        <span class="reco-title">Recommendations</span>
+      </div>
+      <ul class="reco-list" id="recoList" aria-label="Privacy recommendations">
+      </ul>
+    </section>
+
+    <!-- ── Network Counters ───────────────────────────────── -->
+    <section class="counters-section" aria-label="Network statistics">
+      <div class="counters-grid">
+        <div class="counter-card" title="Total network requests on this page">
+          <span class="counter-icon" aria-hidden="true">🌐</span>
+          <span class="counter-value" id="totalReqCount" aria-label="Total requests">0</span>
+          <span class="counter-label">Total Reqs</span>
+        </div>
+        <div class="counter-card" title="Requests to third-party domains">
+          <span class="counter-icon" aria-hidden="true">🔗</span>
+          <span class="counter-value" id="thirdPartyReqCount" aria-label="Third-party requests">0</span>
+          <span class="counter-label">3rd-Party</span>
+        </div>
+        <div class="counter-card alert-card" title="Requests to known tracker domains">
+          <span class="counter-icon" aria-hidden="true">🎯</span>
+          <span class="counter-value" id="trackerReqCount" aria-label="Tracker requests">0</span>
+          <span class="counter-label">Trackers</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Dev Panel ──────────────────────────────────────── -->
+    <section class="dev-panel" id="devPanel" hidden aria-label="Developer diagnostics">
+      <div class="dev-panel-title">⚙ Dev Diagnostics</div>
+      <div class="dev-row"><span class="dev-key">Tab ID</span><span class="dev-val mono" id="diag-tab">—</span></div>
+      <div class="dev-row"><span class="dev-key">Visit ID</span><span class="dev-val mono" id="diag-visit">—</span></div>
+      <div class="dev-row"><span class="dev-key">Ping RTT</span><span class="dev-val mono" id="diag-ping">—</span></div>
+      <div class="dev-row"><span class="dev-key">Messages</span><span class="dev-val ok" id="diag-msg">—</span></div>
+      <div class="dev-actions">
+        <button class="dev-btn" id="btnLoadDemo">Load Demo</button>
+        <button class="dev-btn" id="btnRefresh">↺ Refresh</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ── Error State ─────────────────────────────────────── -->
+  <div class="error-state" id="errorState" hidden role="alert" aria-live="assertive">
+    <span class="error-icon" aria-hidden="true">⚠️</span>
+    <div class="error-title">Failed to load report</div>
+    <div class="error-msg" id="errorMsg"></div>
+    <button class="error-retry" id="btnRetry">Try Again</button>
+  </div>
+
+  <!-- ── Bottom Navigation ──────────────────────────────── -->
+  <nav class="bottom-nav" role="navigation" aria-label="Extension navigation">
+    <button class="nav-btn" id="navHistory" title="View audit history" aria-label="Open history">
+      <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+      <span class="nav-label">History</span>
+    </button>
+    <button class="nav-btn" id="navSummary" title="Weekly summary" aria-label="Open weekly summary">
+      <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+      <span class="nav-label">Summary</span>
+    </button>
+    <button class="nav-btn" id="navSettings" title="Open settings" aria-label="Open settings">
+      <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+      <span class="nav-label">Settings</span>
+    </button>
+    <button class="nav-btn" id="navDev" title="Toggle dev panel" aria-label="Toggle developer panel">
+      <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+      <span class="nav-label">Dev</span>
+    </button>
+  </nav>
+
+  <script src="popup.js" type="module"></script>
+</body>
+</html>

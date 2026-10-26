@@ -1,0 +1,51 @@
+TrackerLens v1.0.0 — Initial Release
+=====================================
+
+TrackerLens is now available for Chrome and Chromium-based browsers.
+
+WHAT'S INCLUDED IN v1.0.0
+
+• Real-time third-party tracker detection using a locally bundled domain database
+• Fingerprinting indicator monitoring (Canvas, WebGL, AudioContext APIs)
+• Cookie behavior analysis (read-only, metadata only — no cookie values)
+• Consent banner dark pattern detection
+• Transparent rule-based Privacy Exposure Score (0–100) with full explanations
+• Audit History view with search, filter, and sort
+• Weekly Summary dashboard with per-day charts
+• Data export (JSON and CSV)
+• Trusted Sites management
+• Configurable scoring weights
+• Full local storage — no data leaves your device
+• Dark/Light mode support
+
+ARCHITECTURE
+
+• Manifest V3 service worker with ES modules
+• MAIN world content script for fingerprinting API interception
+• Isolated content script bridge for secure message passing
+• IndexedDB for local persistent storage
+• chrome.storage.session for cross-restart tab state
+
+KNOWN LIMITATIONS
+
+• Fingerprinting detection reports API access indicators — not confirmed fingerprinting attempts
+• Canvas API is used by legitimate content (games, charts, etc.); access detection is conservative
+• Consent banner detection uses heuristics and may not catch all dark patterns
+• Tracker database contains a curated set of known domains — not exhaustive
+• Not a blocker — detection only, no request modification
+• Restricted browser pages (chrome://, edge://, about:) cannot be inspected
+
+SECURITY
+
+• No eval(), no remote JavaScript, no telemetry
+• All page-originated input is validated before processing
+• Content script messages are validated by sender ID
+• No cookie values stored — metadata only
+
+PRIVACY
+
+• All data stays local (IndexedDB)
+• No analytics or error reporting
+• No network requests from the extension
+• Favicon loading uses the extension icon to avoid domain leakage
+• Data can be deleted at any time from Settings

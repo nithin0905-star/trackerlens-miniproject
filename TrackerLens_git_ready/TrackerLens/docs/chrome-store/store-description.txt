@@ -1,0 +1,70 @@
+TrackerLens — Browser Privacy & Fingerprinting Exposure Auditor
+
+=== FULL STORE DESCRIPTION ===
+
+TrackerLens gives you a transparent, real-time view of what third-party trackers, fingerprinting indicators, cookies, and consent patterns are observable on every website you visit — all privately, locally, and without sending a single byte to any server.
+
+WHAT TRACKLENS DOES
+
+TrackerLens is an audit and transparency tool, not an ad blocker. It observes network requests, fingerprinting API access indicators, cookie metadata, and consent banner behavior, then calculates a clear 0–100 Privacy Exposure Score with a full explanation of how it was reached.
+
+Every data point is collected, processed, and stored exclusively in your browser. Nothing ever leaves your device.
+
+KEY FEATURES
+
+🔍 Tracker Detection
+Detects observable third-party tracker domains by matching outgoing network requests against a locally bundled database of known analytics, advertising, and data-broker domains. Includes tracker company names, categories, and purposes.
+
+🧬 Fingerprinting Indicator Detection
+Monitors access to privacy-sensitive browser APIs including Canvas, WebGL, AudioContext, and others. Reports access with confidence levels (low / medium / high) so you can see what signals are present without unsupported claims.
+
+🍪 Cookie Behavior Analysis
+Observes cookie metadata from HTTP response headers. Classifies cookies as tracking, third-party, or functional based on observable attributes. Never reads or stores cookie values.
+
+⚠️ Consent Dark Pattern Detection
+Analyzes consent banners for potential dark patterns: pre-checked consent boxes, missing reject options, and visually de-emphasized opt-out controls.
+
+📊 Privacy Exposure Score
+A transparent, rule-based score from 0–100 built from four categories: trackers (40%), fingerprinting (30%), cookies (20%), and consent (10%). Every point in the score is explained in the popup with a "Why this score?" breakdown.
+
+📋 Audit History & Weekly Reports
+Browse your complete privacy history, search and filter by domain or risk level, and view a weekly summary dashboard with per-day charts.
+
+📤 Data Export
+Export your full privacy audit history as JSON or CSV. Your data, your choice.
+
+🛡 Trusted Sites
+Mark sites you trust. TrackerLens continues to measure and score them, but suppresses alerts for those specific domains.
+
+⚙️ Configurable
+Adjust scoring weights for each detection category from the Settings page.
+
+WHAT TRACKLENS DOES NOT DO
+
+TrackerLens does NOT:
+• Block ads or trackers
+• Modify or intercept web traffic
+• Send any data to external servers
+• Guarantee detection of all fingerprinting
+• Provide legal compliance advice
+• Guarantee anonymity
+
+DATA PRIVACY
+
+All analysis, storage, and processing happens entirely inside your browser using IndexedDB. No analytics. No telemetry. No remote code. No cloud sync. Data can be deleted or exported at any time from the Settings page.
+
+PERMISSIONS
+
+• tabs — Required to read the URL of the active tab to identify the current website.
+• webRequest — Required to observe (read-only) outgoing network requests for tracker detection and cookie auditing. Requests are never modified or blocked.
+• storage — Required to persist tab state across service worker restarts using chrome.storage.session.
+• alarms — Required to schedule periodic data retention cleanup.
+• <all_urls> host permission — Required for webRequest to observe cross-origin network requests across all websites.
+
+COMPATIBILITY
+
+Designed for Chrome and Chromium-based browsers (Edge, Brave). Manifest V3.
+
+OPEN SOURCE
+
+TrackerLens is built with standard web technologies (JavaScript, CSS, HTML). No third-party dependencies. No bundler. Pure ES modules.

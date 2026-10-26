@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TrackerLens Phase 3 Test Fixtures</title>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: 40px auto; line-height: 1.6; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        .log { background: #f4f4f4; padding: 15px; margin-top: 20px; border-radius: 5px; min-height: 100px; font-family: monospace; }
+        
+        /* Banner Styles */
+        #consent-banner { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 2px solid #ccc; padding: 20px; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); }
+        .banner-buttons { display: flex; gap: 10px; margin-top: 15px; }
+        .btn-accept { background: #10b981; color: #fff; font-size: 16px; font-weight: bold; border: none; padding: 10px 20px; cursor: pointer; }
+        .btn-reject { background: transparent; color: #999; font-size: 8px; border: none; padding: 5px; cursor: pointer; text-decoration: underline; opacity: 0.5; }
+    </style>
+</head>
+<body>
+    <h1>TrackerLens Phase 3 Test Fixtures</h1>
+    <p>Use these buttons to fire different privacy events. Then check the TrackerLens popup.</p>
+
+    <div>
+        <h3>1. Fingerprinting</h3>
+        <button id="btn-canvas-benign">Benign Canvas Use</button>
+        <button id="btn-canvas-fp">Canvas Fingerprinting</button>
+        <button id="btn-webgl-fp">WebGL Fingerprinting</button>
+        <button id="btn-audio-fp">AudioContext Fingerprinting</button>
+        
+        <h3>2. Cookies</h3>
+        <button id="btn-cookie-1p">Set 1st-Party Cookie (JS)</button>
+        <button id="btn-cookie-persistent">Set Persistent Tracking Cookie (JS)</button>
+        
+        <h3>3. Consent Banners</h3>
+        <button id="btn-consent">Show Dark-Pattern Consent Banner</button>
+        
+        <h3>Tools</h3>
+        <button id="btn-clear-log">Clear Log</button>
+    </div>
+
+    <div class="log" id="log"></div>
+
+    <!-- Hidden canvas for tests -->
+    <canvas id="test-canvas" width="200" height="50" style="display:none;"></canvas>
+
+    <!-- Hidden consent banner -->
+    <div id="consent-banner">
+        <h3>We care about your privacy</h3>
+        <p>We use cookies to personalize content, ads, and analyze traffic. Do you consent?</p>
+        <label><input type="checkbox" checked id="precheck1"> Required Cookies</label>
+        <label><input type="checkbox" checked id="precheck2"> Performance Cookies</label>
+        <label><input type="checkbox" checked id="precheck3"> Targeting Cookies</label>
+        
+        <div class="banner-buttons">
+            <button class="btn-accept" id="btn-accept">ACCEPT ALL</button>
+            <button class="btn-reject" id="btn-reject">Manage Preferences</button>
+        </div>
+    </div>
+
+    <script>
+        const logEl = document.getElementById('log');
+        function log(msg) {
+            const entry = document.createElement('div');
+            entry.textContent = `${new Date().toLocaleTimeString()} - ${msg}`;
+            logEl.appendChild(entry);
+        }
+
+        // 1. Benign Canvas
+        document.getElementById('btn-canvas-benign').addEventListener('click', () => {
+            const canvas = document.getElementById('test-canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = 'blue';
+            ctx.fillRect(0, 0, 100, 50);
+            log('Drew to canvas (no extraction, should be low/no confidence FP)');
+        });
+
+        // 2. Canvas FP
+        document.getElementById('btn-canvas-fp').addEventListener('click', () => {
+            const canvas = document.getElementById('test-canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = 'red';
+            ctx.fillText('Fingerprint me 123', 10, 20);
+            const dataUrl = canvas.toDataURL(); // Extracts the drawn text
+            log('Drew text and extracted via toDataURL (high confidence FP)');
+        });
+
+        // 3. WebGL FP
+        document.getElementById('btn-webgl-fp').addEventListener('click', () => {
+            const canvas = document.createElement('canvas');
+            const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+            if (gl) {
+                const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                if (debugInfo) {
+                    const vendor = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
+                    const renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+                    log(`Extracted WebGL info: ${vendor} - ${renderer}`);
+                } else {
+                    log('Extracted WebGL params without debug_renderer_info');
+                }
+            } else {
+                log('WebGL not supported');
+            }
+        });
+
+        // 4. AudioContext FP
+        document.getElementById('btn-audio-fp').addEventListener('click', () => {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioCtx.createOscillator();
+                const compressor = audioCtx.createDynamicsCompressor();
+                log('Created AudioContext DynamicsCompressor (high confidence FP)');
+            } catch (e) {
+                log(`AudioContext error: ${e.message}`);
+            }
+        });
+
+        // 5. Cookies
+        document.getElementById('btn-cookie-1p').addEventListener('click', () => {
+            document.cookie = "test_session=123; path=/";
+            log('Set 1st-party session cookie (test_session=123)');
+        });
+
+        document.getElementById('btn-cookie-persistent').addEventListener('click', () => {
+            const date = new Date();
+            date.setTime(date.getTime() + (365 * 24 * 60 * 60 * 1000));
+            document.cookie = `_ga_fake=123.456; expires=${date.toUTCString()}; path=/`;
+            log('Set persistent tracking-like cookie (_ga_fake)');
+        });
+
+        // 6. Consent Banner
+        document.getElementById('btn-consent').addEventListener('click', () => {
+            document.getElementById('consent-banner').style.display = 'block';
+            log('Injected consent banner into DOM. Wait 1 sec for tracker observer to detect dark patterns (pre-checked, small reject font).');
+        });
+
+        document.getElementById('btn-accept').addEventListener('click', () => {
+            document.getElementById('consent-banner').style.display = 'none';
+        });
+
+        document.getElementById('btn-reject').addEventListener('click', () => {
+            document.getElementById('consent-banner').style.display = 'none';
+        });
+
+        document.getElementById('btn-clear-log').addEventListener('click', () => {
+            logEl.textContent = '';
+        });
+    </script>
+</body>
+</html>

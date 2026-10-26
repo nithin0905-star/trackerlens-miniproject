@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="TrackerLens History — Browse past privacy audit records.">
+  <title>TrackerLens — Audit History</title>
+  <link rel="stylesheet" href="history.css">
+</head>
+<body>
+
+  <!-- ── Header ─────────────────────────────────────────── -->
+  <header class="history-header">
+    <div class="header-left">
+      <img src="../icons/icon48.png" alt="TrackerLens" class="brand-icon">
+      <div class="header-title">
+        <h1>Audit History</h1>
+        <p>TrackerLens — Privacy Exposure Records</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-ghost" id="btnSettings" title="Open Settings">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        Settings
+      </button>
+      <button class="btn btn-ghost" id="btnExportCSV" title="Export as CSV">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+        CSV
+      </button>
+      <button class="btn btn-primary" id="btnExport" title="Export as JSON">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+        JSON
+      </button>
+      <button class="btn btn-ghost" id="btnLoadDemo" title="Load demo data (Dev)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 2v7.31"></path><path d="M14 9.3V1.99"></path><path d="M8.5 2h7"></path><path d="M14 9.3a6.5 6.5 0 1 1-4 0"></path><line x1="5.52" y1="16" x2="18.48" y2="16"></line></svg>
+        Demo
+      </button>
+    </div>
+  </header>
+
+  <!-- ── Daily Stats Bar ──────────────────────────────── -->
+  <div class="stats-bar" id="statsBar" role="region" aria-label="Today's statistics">
+    <div class="stat-cell total">
+      <span class="stat-value" id="statVisits">—</span>
+      <span class="stat-label">Visits Today</span>
+    </div>
+    <div class="stat-cell trackers">
+      <span class="stat-value" id="statTrackers">—</span>
+      <span class="stat-label">Trackers</span>
+    </div>
+    <div class="stat-cell fp">
+      <span class="stat-value" id="statFp">—</span>
+      <span class="stat-label">Fingerprints</span>
+    </div>
+    <div class="stat-cell cookies">
+      <span class="stat-value" id="statCookies">—</span>
+      <span class="stat-label">Cookies</span>
+    </div>
+  </div>
+
+  <!-- ── Controls ─────────────────────────────────────── -->
+  <div class="controls-bar">
+    <div class="search-box">
+      <span class="search-icon" aria-hidden="true">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      </span>
+      <input type="search" id="searchInput" placeholder="Search domains…" autocomplete="off"
+             aria-label="Search visit history">
+    </div>
+
+    <!-- Filter chips -->
+    <div class="filter-chips" role="group" aria-label="Filter by risk level">
+      <button class="chip active"        data-filter="all">All</button>
+      <button class="chip risk-low"      data-filter="low">Low</button>
+      <button class="chip risk-moderate" data-filter="moderate">Moderate</button>
+      <button class="chip risk-high"     data-filter="high">High</button>
+      <button class="chip risk-vhigh"    data-filter="very_high">Very High</button>
+      <button class="chip risk-critical" data-filter="critical">Critical</button>
+    </div>
+
+    <!-- Sort controls -->
+    <div class="sort-bar" role="group" aria-label="Sort history">
+      <span class="sort-label">Sort:</span>
+      <button class="sort-btn active" data-sort="date" aria-pressed="true">Date</button>
+      <button class="sort-btn" data-sort="score" aria-pressed="false">Score</button>
+      <button class="sort-btn" data-sort="domain" aria-pressed="false">Domain</button>
+      <button class="sort-dir" id="sortDir" title="Toggle sort direction" aria-label="Sort direction: descending">▼</button>
+    </div>
+  </div>
+
+  <!-- ── Visit List ───────────────────────────────────── -->
+  <main class="history-main" role="main">
+
+    <!-- Loading state -->
+    <div id="loadingState" aria-live="polite" aria-label="Loading history">
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card" style="opacity:0.7;"></div>
+      <div class="skeleton-card" style="opacity:0.5;"></div>
+    </div>
+
+    <!-- Visit list -->
+    <ul class="visit-list fade-in" id="visitList" hidden aria-label="Visit history" role="list"></ul>
+
+    <!-- Domain detail panel -->
+    <aside class="domain-detail" id="domainDetail" hidden aria-label="Domain detail">
+      <div class="detail-header">
+        <button class="detail-close" id="btnDetailClose" aria-label="Close detail panel">✕</button>
+        <span class="detail-domain" id="detailDomain"></span>
+      </div>
+      <div class="detail-body" id="detailBody"></div>
+    </aside>
+
+    <!-- Empty state -->
+    <div class="empty-state" id="emptyState" hidden role="status">
+      <span class="empty-icon" aria-hidden="true">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      </span>
+      <div class="empty-title">No Records Found</div>
+      <p class="empty-desc">
+        Browse some websites and TrackerLens will start building your privacy audit history.
+        Or load demo data to see how the interface looks.
+      </p>
+      <br>
+      <button class="btn btn-primary" id="btnLoadDemoEmpty">⚗ Load Demo Data</button>
+    </div>
+
+  </main>
+
+  <script src="history.js" type="module"></script>
+</body>
+</html>

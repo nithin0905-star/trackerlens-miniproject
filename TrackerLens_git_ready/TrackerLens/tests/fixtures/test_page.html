@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TrackerLens Test Fixture</title>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: 40px auto; line-height: 1.6; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        .log { background: #f4f4f4; padding: 15px; margin-top: 20px; border-radius: 5px; min-height: 100px; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <h1>TrackerLens Phase 2 Test Fixtures</h1>
+    <p>Use these buttons to fire different types of network requests. Then check the TrackerLens popup to verify detection.</p>
+
+    <div>
+        <button id="btn-1p">1. First-Party Request</button>
+        <button id="btn-1-tracker">2. One Analytics Tracker (Google Analytics)</button>
+        <button id="btn-multi">3. Multiple Trackers</button>
+        <button id="btn-subdomain">4. Tracker as Subdomain (t.co)</button>
+        <button id="btn-unknown-3p">5. Unknown 3rd Party Request</button>
+        <button id="btn-repeated">6. Same Tracker Repeated (Should count as 1 unique)</button>
+        <button id="btn-clear-log">Clear Log</button>
+    </div>
+
+    <div class="log" id="log"></div>
+
+    <script>
+        const logEl = document.getElementById('log');
+        function log(msg) {
+            const entry = document.createElement('div');
+            entry.textContent = `${new Date().toLocaleTimeString()} - ${msg}`;
+            logEl.appendChild(entry);
+        }
+
+        // 1. First-party
+        document.getElementById('btn-1p').addEventListener('click', () => {
+            // Request to own domain
+            fetch(window.location.href)
+                .then(() => log('Fired 1st party request (self)'))
+                .catch(e => log(`Error: ${e}`));
+        });
+
+        // 2. One analytics tracker
+        document.getElementById('btn-1-tracker').addEventListener('click', () => {
+            // Known tracker from dataset
+            fetch('https://google-analytics.com/ping', { mode: 'no-cors' })
+                .then(() => log('Fired Google Analytics tracker'))
+                .catch(e => log(`Error: ${e}`));
+        });
+
+        // 3. Multiple trackers
+        document.getElementById('btn-multi').addEventListener('click', () => {
+            fetch('https://google-analytics.com/ping2', { mode: 'no-cors' });
+            fetch('https://facebook.com/tr', { mode: 'no-cors' });
+            fetch('https://hotjar.com/api', { mode: 'no-cors' });
+            log('Fired 3 different trackers (GA, Facebook, Hotjar)');
+        });
+
+        // 4. Tracker as subdomain
+        document.getElementById('btn-subdomain').addEventListener('click', () => {
+            // t.co is in dataset, sub.t.co should match
+            fetch('https://sub.t.co/track', { mode: 'no-cors' })
+                .then(() => log('Fired subdomain tracker (sub.t.co)'))
+                .catch(e => log(`Error: ${e}`));
+        });
+
+        // 5. Unknown third-party request
+        document.getElementById('btn-unknown-3p').addEventListener('click', () => {
+            // A domain not in the tracker list
+            fetch('https://example.org/', { mode: 'no-cors' })
+                .then(() => log('Fired unknown 3rd party request (example.org)'))
+                .catch(e => log(`Error: ${e}`));
+        });
+
+        // 6. Same tracker repeated
+        document.getElementById('btn-repeated').addEventListener('click', () => {
+            fetch('https://mixpanel.com/track1', { mode: 'no-cors' });
+            fetch('https://mixpanel.com/track2', { mode: 'no-cors' });
+            fetch('https://mixpanel.com/track3', { mode: 'no-cors' });
+            log('Fired Mixpanel tracker 3 times (should be 1 unique)');
+        });
+
+        document.getElementById('btn-clear-log').addEventListener('click', () => {
+            logEl.textContent = '';
+        });
+    </script>
+</body>
+</html>

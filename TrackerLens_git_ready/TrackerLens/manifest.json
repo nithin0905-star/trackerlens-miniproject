@@ -1,0 +1,91 @@
+{
+  "manifest_version": 3,
+  "name": "TrackerLens",
+  "version": "1.0.1",
+  "description": "Browser privacy and fingerprinting exposure auditor. All data stays local.",
+  "author": "TrackerLens Contributors",
+
+  "icons": {
+    "16":  "icons/icon16.png",
+    "32":  "icons/icon32.png",
+    "48":  "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16":  "icons/icon16.png",
+      "32":  "icons/icon32.png",
+      "48":  "icons/icon48.png",
+      "128": "icons/icon128.png"
+    },
+    "default_title": "TrackerLens — Privacy Auditor"
+  },
+
+  "background": {
+    "service_worker": "background/service_worker.js",
+    "type": "module"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content/fingerprint/fp_main.js"],
+      "run_at": "document_start",
+      "world": "MAIN",
+      "all_frames": false
+    },
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content/bridge.js"],
+      "run_at": "document_start",
+      "all_frames": false
+    },
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content/page_observer.js"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+
+  "options_ui": {
+    "page": "options/options.html",
+    "open_in_tab": true
+  },
+
+  "permissions": [
+    "tabs",
+    "webRequest",
+    "alarms",
+    "storage"
+  ],
+
+  "host_permissions": [
+    "<all_urls>"
+  ],
+
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "history/history.html",
+        "summary/summary.html"
+      ],
+      "matches": ["<all_urls>"]
+    },
+    {
+      "resources": [
+        "report/*",
+        "data/*",
+        "icons/*",
+        "fonts/*"
+      ],
+      "matches": ["chrome-extension://*/*"]
+    }
+  ],
+
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'none';"
+  }
+}

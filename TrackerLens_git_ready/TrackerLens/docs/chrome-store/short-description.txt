@@ -1,0 +1,1 @@
+Audit website tracking, fingerprinting indicators, cookies, and consent dark patterns with a transparent local Privacy Exposure Score. No data leaves your device.

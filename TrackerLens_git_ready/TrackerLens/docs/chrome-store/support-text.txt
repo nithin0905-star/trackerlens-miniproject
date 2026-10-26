@@ -1,0 +1,68 @@
+TRACKERLENS — SUPPORT TEXT
+For Chrome Web Store Listing
+==============================
+
+SUPPORT / FAQ
+
+Q: Does TrackerLens block trackers?
+A: No. TrackerLens is an audit and transparency tool. It observes and reports 
+   on tracking activity but does not block, filter, or modify any requests.
+   For blocking, consider uBlock Origin or similar tools.
+
+Q: Does TrackerLens send my browsing data anywhere?
+A: No. All analysis and storage happens entirely inside your browser using 
+   IndexedDB. No data is transmitted to any external server, including the 
+   extension developer. There is no analytics, telemetry, or cloud sync.
+
+Q: Why does TrackerLens need the "Access your data for all websites" permission?
+A: This host permission (<all_urls>) is required for the webRequest API to 
+   observe network requests across all websites you visit. Without it, 
+   TrackerLens cannot detect trackers or analyze cookies. No data leaves 
+   your browser.
+
+Q: Why does the score show 0 on some pages?
+A: New visits start with a score of 0 until monitoring data is collected. 
+   The score updates automatically as requests complete. Wait a few seconds 
+   after the page loads for the score to populate.
+
+Q: TrackerLens shows nothing on chrome:// or about: pages. Is this a bug?
+A: No. Chrome extensions cannot inspect internal browser pages for security 
+   reasons. TrackerLens gracefully handles these pages and shows an 
+   informational message.
+
+Q: The popup says "Detection unavailable on this page". What does this mean?
+A: This appears for restricted pages (browser internal pages, PDFs, 
+   new tab pages) where Chrome does not allow extension content scripts to run.
+
+Q: How is the Privacy Exposure Score calculated?
+A: The score is a transparent, rule-based calculation across four categories:
+   Trackers (40%), Fingerprinting (30%), Cookies (20%), Consent (10%).
+   Every point in the score is explained in the popup under "Why this score?".
+
+Q: How do I delete my data?
+A: Open Settings → Storage & Export → Reset History (or Factory Reset).
+   You can also export your data first as JSON or CSV.
+
+Q: How do I mark a site as trusted?
+A: Click the shield icon in the popup. Trusted sites are still fully audited 
+   and scored, but badge alerts are suppressed for those domains.
+
+Q: Is TrackerLens open source?
+A: Yes. The extension is built with standard web technologies (vanilla 
+   JavaScript, HTML, CSS) with no third-party dependencies.
+
+KNOWN LIMITATIONS
+
+• Fingerprinting detection reports API access indicators — not confirmed 
+  fingerprinting. Canvas is legitimately used by games, charts, and maps.
+• Consent detection uses heuristics and may not catch all patterns.
+• Tracker database is curated — not every tracker domain is included.
+• The extension cannot inspect encrypted request bodies.
+• Favicon images are not loaded from external services to protect privacy;
+  the TrackerLens icon is shown instead.
+
+BROWSER COMPATIBILITY
+
+Designed for: Google Chrome (Manifest V3)
+Also works on: Microsoft Edge, Brave (Chromium-based)
+Firefox: Not currently supported (different extension API)

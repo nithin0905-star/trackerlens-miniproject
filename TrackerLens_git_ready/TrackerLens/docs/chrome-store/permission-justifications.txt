@@ -1,0 +1,107 @@
+TRACKERLENS — PERMISSION JUSTIFICATIONS
+For Chrome Web Store Submission
+=====================================
+
+PERMISSION: tabs
+----------------
+Why required:
+  TrackerLens needs to know the URL of the current active tab in order to
+  identify which website is being visited and to display the privacy report
+  for that specific domain in the popup.
+
+Which feature needs it:
+  • Popup: querying the active tab URL to request the domain report
+  • Badge: updating the extension badge per-tab with the current risk score
+  • Navigation tracking: associating incoming network requests with the
+    correct tab/domain
+
+Why narrower permission is insufficient:
+  The activeTab permission would only grant access when the user clicks the
+  extension icon. TrackerLens must observe all tab navigations automatically
+  (not just on user click) to record visit history and update the badge in
+  real-time. The tabs permission is required for this continuous monitoring.
+
+---
+
+PERMISSION: webRequest
+----------------------
+Why required:
+  TrackerLens uses webRequest.onCompleted to observe (read-only) outgoing
+  network requests as they complete. This is the only Manifest V3 compatible
+  way to observe cross-origin network activity for tracker detection.
+
+Which feature needs it:
+  • Tracker detection: matching request domains against the local tracker
+    database to identify known third-party trackers
+  • Third-party vs first-party classification: comparing request origin to
+    page origin
+  • Cookie audit: reading Set-Cookie response headers to classify cookies
+    by metadata (name pattern, attributes — never values)
+  • Network counters: tracking total/third-party/tracker request counts per visit
+
+Why narrower permission is insufficient:
+  The declarativeNetRequest API does not provide the event-driven read access
+  needed to observe and record request details (URL, type, response headers)
+  for auditing. webRequest (read-only, observe-only) is required.
+  TrackerLens NEVER uses webRequestBlocking or modifies any requests.
+
+---
+
+PERMISSION: storage
+-------------------
+Why required:
+  TrackerLens uses chrome.storage.session to persist per-tab state (visit ID,
+  tracker state, pending data) across service worker restarts. MV3 service
+  workers are terminated after periods of inactivity and must recover state
+  when reawakened.
+
+Which feature needs it:
+  • Service worker state recovery: restoring in-memory tab tracking state
+    after the service worker is terminated and restarted
+  • Automatic monitoring continuity: ensuring no data loss when the browser
+    restarts the service worker mid-session
+
+Why narrower permission is insufficient:
+  chrome.storage.session is the correct MV3 solution for ephemeral,
+  in-memory-equivalent state that must survive service worker restarts.
+  There is no alternative API that provides this capability.
+
+---
+
+PERMISSION: alarms
+------------------
+Why required:
+  TrackerLens registers a periodic alarm to run data retention cleanup,
+  deleting visit records older than the user-configured retention period.
+
+Which feature needs it:
+  • Data retention: automatically deleting old audit records per user settings
+    (default: 30 days)
+
+Why narrower permission is insufficient:
+  setTimeout/setInterval cannot be used for recurring background work in MV3
+  because the service worker is terminated when idle. The alarms API is the
+  MV3-approved mechanism for scheduled background tasks.
+
+---
+
+HOST PERMISSION: <all_urls>
+----------------------------
+Why required:
+  The webRequest permission only grants access to network request events for
+  URLs that are also covered by host permissions. Because TrackerLens audits
+  all websites the user visits (not just a predefined list), <all_urls> is
+  required.
+
+Which feature needs it:
+  • webRequest monitoring across all websites
+  • Content script injection for fingerprinting indicator detection
+
+Why narrower permission is insufficient:
+  TrackerLens is a general-purpose privacy auditor. Limiting host permissions
+  to specific domains would prevent it from functioning on the vast majority
+  of websites users visit. The tool's core purpose is cross-site privacy
+  transparency, which requires broad host access.
+  
+  No data from visited websites is transmitted outside the browser.
+  All processing is strictly local.

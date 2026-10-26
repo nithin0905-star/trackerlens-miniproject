@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="TrackerLens Settings — Configure privacy auditing preferences.">
+  <title>TrackerLens — Settings</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+
+<div class="options-layout">
+
+  <!-- ── Sidebar ──────────────────────────────────────────── -->
+  <aside class="sidebar" role="navigation" aria-label="Settings navigation">
+    <div class="sidebar-brand">
+      <img src="../icons/icon48.png" alt="TrackerLens" class="brand-icon">
+      <div class="brand-text">
+        <h1>TrackerLens</h1>
+        <p>Settings</p>
+      </div>
+    </div>
+
+    <nav>
+      <div class="nav-section">
+        <div class="nav-section-title">Configuration</div>
+        <button class="nav-item active" data-section="scoring" id="nav-scoring">
+          <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg></span> Scoring
+        </button>
+        <button class="nav-item" data-section="trusted" id="nav-trusted">
+          <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></span> Trusted Sites
+        </button>
+        <button class="nav-item" data-section="trackers" id="nav-trackers">
+          <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg></span> Tracker List
+        </button>
+        <button class="nav-item" data-section="display" id="nav-display">
+          <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg></span> Display
+        </button>
+      </div>
+      <div class="nav-section">
+        <div class="nav-section-title">Data</div>
+        <button class="nav-item" data-section="data" id="nav-data">
+          <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg></span> Storage & Export
+        </button>
+        <button class="nav-item" data-section="privacy" id="nav-privacy">
+          <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></span> Privacy Info
+        </button>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="version-badge" id="versionBadge">v0.1.0</div>
+    </div>
+  </aside>
+
+  <!-- ── Main Content ──────────────────────────────────────── -->
+  <main class="main-content" role="main">
+
+    <!-- ── Scoring ─────────────────────────────────────────── -->
+    <section class="options-section active" id="section-scoring">
+      <div class="section-header">
+        <h2><svg style="margin-right:8px;vertical-align:bottom;" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg> Scoring Settings</h2>
+        <p>Adjust how privacy risk is calculated. Weights must add up to 100.</p>
+      </div>
+
+      <div class="settings-card">
+        <div class="card-title">📐 Risk Scoring</div>
+
+        <div class="form-row">
+          <label class="form-label" for="scoringEnabled">
+            <span>Enable Risk Scoring</span>
+            <small>Calculate a 0–100 privacy risk score for each site</small>
+          </label>
+          <label class="toggle">
+            <input type="checkbox" id="scoringEnabled" checked>
+            <div class="toggle-track"><div class="toggle-thumb"></div></div>
+          </label>
+        </div>
+
+        <div class="form-range-row">
+          <div class="range-header">
+            <span class="range-label">🎯 Tracker Weight</span>
+            <span class="range-value" id="val-weightTrackers">40%</span>
+          </div>
+          <input type="range" id="weightTrackers" min="0" max="100" value="40" step="5">
+        </div>
+
+        <div class="form-range-row">
+          <div class="range-header">
+            <span class="range-label">🔍 Fingerprinting Weight</span>
+            <span class="range-value" id="val-weightFingerprinting">35%</span>
+          </div>
+          <input type="range" id="weightFingerprinting" min="0" max="100" value="35" step="5">
+        </div>
+
+        <div class="form-range-row">
+          <div class="range-header">
+            <span class="range-label">🍪 Cookie Weight</span>
+            <span class="range-value" id="val-weightCookies">20%</span>
+          </div>
+          <input type="range" id="weightCookies" min="0" max="100" value="20" step="5">
+        </div>
+
+        <div class="form-range-row">
+          <div class="range-header">
+            <span class="range-label">📋 Consent UX Weight</span>
+            <span class="range-value" id="val-weightConsent">10%</span>
+          </div>
+          <input type="range" id="weightConsent" min="0" max="100" value="10" step="5">
+        </div>
+
+        <div class="form-row" style="border-top: 1px solid rgba(255,255,255,0.06); padding-top:12px; margin-top:4px;">
+          <span style="font-size:11px; color:var(--text-muted)">Total weight (must be 100%)</span>
+          <span style="font-size:12px; font-family:var(--font-mono);" id="weightTotal">100%</span>
+        </div>
+      </div>
+
+      <div class="save-bar">
+        <button class="btn btn-primary" id="btnSaveScoring">💾 Save Scoring Settings</button>
+        <button class="btn btn-ghost"   id="btnResetScoring">↺ Reset to Defaults</button>
+      </div>
+    </section>
+
+    <!-- ── Trusted Sites ────────────────────────────────────── -->
+    <section class="options-section" id="section-trusted">
+      <div class="section-header">
+        <h2><svg style="margin-right:8px;vertical-align:bottom;" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg> Trusted Sites</h2>
+        <p>Sites on this list still get <strong>fully measured and scored</strong>, but badge alerts are suppressed. Use for sites you trust and don't want to be alerted about.</p>
+      </div>
+
+      <div class="settings-card">
+        <div class="card-title">🛡️ Trusted Domains</div>
+        <ul class="trusted-list" id="trustedList">
+          <li style="color:var(--text-muted); font-size:12px; padding:8px 0;">No trusted sites added yet.</li>
+        </ul>
+        <div class="add-trusted-row">
+          <input type="text" id="trustedInput" placeholder="example.com" autocomplete="off">
+          <button class="btn btn-primary" id="btnAddTrusted">+ Add</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Tracker List ─────────────────────────────────────── -->
+    <section class="options-section" id="section-trackers">
+      <div class="section-header">
+        <h2><svg style="margin-right:8px;vertical-align:bottom;" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg> Tracker List Settings</h2>
+        <p>Configure the local tracker detection database.</p>
+      </div>
+
+      <div class="settings-card">
+        <div class="card-title">🗃️ Detection Database</div>
+        <div class="form-row">
+          <label class="form-label" for="trackerListEnabled">
+            <span>Enable Tracker Detection</span>
+            <small>Match requests against the local tracker domain list</small>
+          </label>
+          <label class="toggle">
+            <input type="checkbox" id="trackerListEnabled" checked>
+            <div class="toggle-track"><div class="toggle-thumb"></div></div>
+          </label>
+        </div>
+        <div class="form-row" style="border-bottom:none; margin-top:8px;">
+          <span style="font-size:12px; color:var(--text-secondary)">Database entries</span>
+          <span id="trackerDbCount" style="font-size:12px; font-family:var(--font-mono); color:var(--cyan)">Loading…</span>
+        </div>
+        <div style="margin-top:12px;">
+          <p style="font-size:11px; color:var(--text-muted); line-height:1.6;">
+            The tracker list is compiled locally from public sources (EasyList, Disconnect.me).
+            No remote updates. No network requests made for detection.
+          </p>
+        </div>
+      </div>
+
+      <div class="save-bar">
+        <button class="btn btn-primary" id="btnSaveTrackers">💾 Save</button>
+      </div>
+    </section>
+
+    <!-- ── Display ──────────────────────────────────────────── -->
+    <section class="options-section" id="section-display">
+      <div class="section-header">
+        <h2><svg style="margin-right:8px;vertical-align:bottom;" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg> Display Settings</h2>
+        <p>Customise what information is shown in the popup.</p>
+      </div>
+
+      <div class="settings-card">
+        <div class="card-title">👁️ Popup Visibility</div>
+
+        <div class="form-row">
+          <label class="form-label" for="showRiskBadge">
+            <span>Show Risk Badge</span>
+            <small>Display the coloured risk level badge</small>
+          </label>
+          <label class="toggle">
+            <input type="checkbox" id="showRiskBadge" checked>
+            <div class="toggle-track"><div class="toggle-thumb"></div></div>
+          </label>
+        </div>
+
+        <div class="form-row">
+          <label class="form-label" for="showTrackerCount">
+            <span>Show Tracker Count</span>
+          </label>
+          <label class="toggle">
+            <input type="checkbox" id="showTrackerCount" checked>
+            <div class="toggle-track"><div class="toggle-thumb"></div></div>
+          </label>
+        </div>
+
+        <div class="form-row">
+          <label class="form-label" for="showFpCount">
+            <span>Show Fingerprinting Count</span>
+          </label>
+          <label class="toggle">
+            <input type="checkbox" id="showFpCount" checked>
+            <div class="toggle-track"><div class="toggle-thumb"></div></div>
+          </label>
+        </div>
+
+        <div class="form-row">
+          <label class="form-label" for="showCookieCount">
+            <span>Show Cookie Count</span>
+          </label>
+          <label class="toggle">
+            <input type="checkbox" id="showCookieCount" checked>
+            <div class="toggle-track"><div class="toggle-thumb"></div></div>
+          </label>
+        </div>
+
+        <div class="form-row">
+          <label class="form-label" for="showExplanations">
+            <span>Show Score Explanations</span>
+            <small>Display "Why this score?" panel in popup</small>
+          </label>
+          <label class="toggle">
+            <input type="checkbox" id="showExplanations" checked>
+            <div class="toggle-track"><div class="toggle-thumb"></div></div>
+          </label>
+        </div>
+      </div>
+
+      <div class="save-bar">
+        <button class="btn btn-primary" id="btnSaveDisplay">💾 Save Display Settings</button>
+      </div>
+    </section>
+
+    <!-- ── Data ─────────────────────────────────────────────── -->
+    <section class="options-section" id="section-data">
+      <div class="section-header">
+        <h2><svg style="margin-right:8px;vertical-align:bottom;" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> Storage &amp; Export</h2>
+        <p>Manage local data, retention, and import/export settings.</p>
+      </div>
+
+      <div class="settings-card">
+        <div class="card-title">📅 Data Retention</div>
+        <div class="form-row">
+          <label class="form-label" for="retentionDays">
+            <span>Keep history for (days)</span>
+            <small>Visit records older than this will be deleted</small>
+          </label>
+          <input type="number" id="retentionDays" min="1" max="365" value="30" style="width:80px; text-align:center;">
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="autoDeleteOld">
+            <span>Auto-delete old records</span>
+            <small>Automatically remove records beyond the retention period</small>
+          </label>
+          <label class="toggle">
+            <input type="checkbox" id="autoDeleteOld" checked>
+            <div class="toggle-track"><div class="toggle-thumb"></div></div>
+          </label>
+        </div>
+      </div>
+
+      <div class="settings-card">
+        <div class="card-title">📤 Export Data</div>
+        <p style="font-size:12px; color:var(--text-secondary); margin-bottom:14px; line-height:1.6;">
+          Export all locally stored privacy audit data. No data is sent anywhere — the file is downloaded directly to your device.
+        </p>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="btn btn-primary" id="btnExportJSON">📄 Export JSON</button>
+          <button class="btn btn-ghost"   id="btnExportCSV">📊 Export CSV</button>
+        </div>
+      </div>
+
+      <div class="settings-card">
+        <div class="card-title">📥 Import Settings</div>
+        <p style="font-size:12px; color:var(--text-secondary); margin-bottom:14px; line-height:1.6;">
+          Import settings from a previously exported JSON file.
+        </p>
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+          <input type="file" id="importFile" accept=".json"
+                 style="font-size:12px; color:var(--text-secondary);">
+          <button class="btn btn-ghost" id="btnImportSettings">📥 Import</button>
+        </div>
+      </div>
+
+      <div class="settings-card" style="border-color:rgba(239,68,68,0.2);">
+        <div class="card-title" style="color:var(--red);">⚠️ Danger Zone</div>
+        <p style="font-size:12px; color:var(--text-secondary); margin-bottom:14px; line-height:1.6;">
+          These actions are irreversible. All deleted data cannot be recovered.
+        </p>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="btn btn-danger" id="btnClearData">🗑️ Clear All Data</button>
+          <button class="btn btn-danger" id="btnFactoryReset">💥 Factory Reset</button>
+        </div>
+      </div>
+
+      <div class="save-bar">
+        <button class="btn btn-primary" id="btnSaveData">💾 Save Retention Settings</button>
+      </div>
+    </section>
+
+    <!-- ── Privacy Info ──────────────────────────────────────── -->
+    <section class="options-section" id="section-privacy">
+      <div class="section-header">
+        <h2><svg style="margin-right:8px;vertical-align:bottom;" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> Privacy Information</h2>
+        <p>How TrackerLens handles your data.</p>
+      </div>
+
+      <div class="privacy-card">
+        <h3>📦 All Data Stays Local</h3>
+        <p>TrackerLens stores <strong>all</strong> audit data exclusively in your browser using IndexedDB. No data is ever transmitted to external servers, cloud services, or any third party.</p>
+      </div>
+
+      <div class="privacy-card">
+        <h3>🚫 No Remote Connections</h3>
+        <p>TrackerLens makes no outbound network requests for its core functionality. The tracker database and all fonts are bundled locally. No telemetry, no analytics, no reporting.</p>
+        <ul>
+          <li>All fonts (Inter, JetBrains Mono) are loaded from the extension bundle.</li>
+          <li>Favicons in the popup use a local fallback icon to protect your browsing history.</li>
+        </ul>
+      </div>
+
+      <div class="privacy-card">
+        <h3>👁️ What is Observed</h3>
+        <p>TrackerLens observes (but never modifies or blocks):</p>
+        <ul>
+          <li>Outgoing HTTP request URLs to detect tracker domains</li>
+          <li>Set-Cookie response headers to classify cookies</li>
+          <li>Privacy-sensitive JavaScript API calls (canvas, WebGL, AudioContext, etc.)</li>
+          <li>Consent banner presence and structure in the DOM</li>
+        </ul>
+      </div>
+
+      <div class="privacy-card">
+        <h3>🔑 Permissions Explained</h3>
+        <ul>
+          <li><strong>tabs</strong> — Read the URL of the active tab to identify the site</li>
+          <li><strong>webNavigation</strong> — Detect when you navigate to a new page</li>
+          <li><strong>webRequest</strong> — Observe (read-only) outgoing requests to detect trackers</li>
+          <li><strong>storage</strong> — Save lightweight settings in chrome.storage</li>
+          <li><strong>cookies</strong> — Read (not modify) cookies for audit purposes</li>
+          <li><strong>activeTab</strong> — Access the current tab when the popup is open</li>
+          <li><strong>&lt;all_urls&gt;</strong> — Required for webRequest to observe cross-origin requests</li>
+        </ul>
+      </div>
+
+      <div class="privacy-card">
+        <h3>🛡️ Your Controls</h3>
+        <p>You can export all your data, clear it at any time, or perform a factory reset from the Storage &amp; Export section. TrackerLens respects your autonomy over your local data.</p>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- Toast notification -->
+<div class="toast" id="toast" role="alert" aria-live="assertive"></div>
+
+<script src="options.js" type="module"></script>
+</body>
+</html>

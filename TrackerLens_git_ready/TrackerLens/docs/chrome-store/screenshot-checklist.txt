@@ -1,0 +1,72 @@
+TRACKERLENS — SCREENSHOT CHECKLIST
+Required Screenshots for Chrome Web Store
+==========================================
+
+The Chrome Web Store requires:
+  - At minimum 1 screenshot
+  - Recommended: 3–5 screenshots
+  - Size: 1280×800 px OR 640×400 px (exact, no borders)
+  - Format: PNG or JPEG
+
+SCREENSHOTS TO CAPTURE
+-----------------------
+
+Screenshot 1: Main Privacy Score (REQUIRED)
+  - Load the extension on a website with some tracker activity (e.g., a news site)
+  - Open the popup
+  - Capture the full popup showing:
+    • The score ring with a non-zero score
+    • The risk badge (e.g., "High Risk")
+    • The four breakdown category bars
+  - Suggested filename: 01-privacy-score.png
+
+Screenshot 2: Score Explanation Panel
+  - On the same popup, scroll down to the "Why this score?" section
+  - Capture the explanation list showing specific rules that contributed to the score
+  - Suggested filename: 02-score-explanation.png
+
+Screenshot 3: Tracker Audit List
+  - On the popup, scroll to the Trackers section
+  - Capture the list of detected tracker companies, categories, and domains
+  - Suggested filename: 03-tracker-list.png
+
+Screenshot 4: Audit History View
+  - Open the History page (via bottom nav or popup History button)
+  - Ensure it shows several domain entries with risk badges and scores
+  - Suggested filename: 04-history.png
+
+Screenshot 5: Weekly Summary Dashboard
+  - Open the Summary page
+  - Capture the full dashboard with the 8-metric grid and daily chart
+  - Suggested filename: 05-weekly-summary.png
+
+Screenshot 6: Settings Page (optional but recommended)
+  - Open the Settings (Options) page
+  - Capture the Scoring Settings or Trusted Sites section
+  - Suggested filename: 06-settings.png
+
+HOW TO CAPTURE CORRECTLY
+-------------------------
+
+1. Load the extension from dist/ or the ZIP in Chrome Developer Mode
+2. Navigate to a busy website (e.g., a news site, not Google/Wikipedia)
+3. Wait 3–5 seconds for monitoring data to populate
+4. Open the extension popup
+5. Use Chrome DevTools → More Tools → Developer Tools on the popup (right-click → Inspect)
+   OR use a screenshot tool at the OS level
+6. Ensure the popup is fully expanded and all sections are visible
+7. Recommended browser: Chrome, dark mode, at 100% zoom
+
+IMPORTANT
+---------
+DO NOT use placeholder images or mockups.
+All screenshots must be captured from the actual working extension.
+Chrome may reject listings with mockups that don't match actual functionality.
+
+PROMO IMAGES (Optional but recommended for better store presence)
+------------------------------------------------------------------
+Small promo tile:  440×280 px (PNG/JPEG)
+Large promo tile:  920×680 px (PNG/JPEG)
+Marquee promo:    1400×560 px (PNG/JPEG)
+
+These are optional but significantly increase click-through rate.
